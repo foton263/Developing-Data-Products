@@ -1,0 +1,49 @@
+Stock Forecast miniApp Presentation
+========================================================
+author: 
+date: `r date()`
+transition: rotate
+
+
+The App!
+========================================================
+
+![alt text](appscreenshot.png)
+
+Historical View
+========================================================
+```{r, echo=FALSE}
+library(quantmod)
+library(forecast)
+library(tseries)
+prices<-get.hist.quote("^NDX", quote="Adj",
+                   provider = "yahoo", start="2012-01-01",
+                   end="2015-06-16", retclass="zoo")
+prices<-na.locf(prices)
+plot(prices)
+```
+***
+- The financial information is taken from yahoo. 
+- Where missing values existed in the data they have been replaced with the most recent existing price.
+
+Forecast View
+========================================================
+
+```{r, echo=FALSE}
+fit <- auto.arima(prices)
+plot(forecast(fit, 30))
+```
+***
+The forecast view is constructed using the `auto.arima()` function which selects the best autoregressive integrated moving average (ARIMA) model to the timeseries
+
+Timeseries Decomposition
+========================================================
+
+```{r, echo=FALSE}
+p_ts <- ts(prices, frequency=365)
+decomp <- decompose(p_ts)
+plot(decomp)
+```
+***
+- The time series decomposition shows the data broken down into 3 seperate components: Seasonal, trend and irregular using moving averages.
+- The time series decomposition requires at least 3 years worth of data to calculate. 
